@@ -1,0 +1,109 @@
+service: "timerlol"
+frameworkVersion: "3"
+
+plugins:
+  - serverless-esbuild
+
+package:
+  individually: true
+
+provider:
+  name: "aws"
+  region: "us-east-1"
+  runtime: "nodejs20.x"
+  deploymentMethod: direct
+  architecture: arm64
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - cognito-idp:AdminGetUser
+          Resource: !GetAtt TimerLolUserPool.Arn
+  environment:
+    # CHAVE: valor
+    COGNITO_CLIENT_ID: !Ref TimerLolUserPoolClient
+    COGNITO_USER_POOL_ID: !Ref TimerLolUserPool
+  httpApi:
+    authorizers:
+      CognitoAuthorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        issuerUrl: !GetAtt TimerLolUserPool.ProviderURL
+        audience:
+          - !Ref TimerLolUserPoolClient
+
+custom:
+  esbuild:
+    bundle: true
+    minify: true
+    sourcemap: false
+    target: "node20"
+    exclude:
+      - "@aws-sdk/*"
+    format: "esm"
+    outputFileExtension: .mjs
+    platform: "node"
+    concurrency: 10
+
+functions:
+  cognitoCustomMessage:
+    handler: src/functions/authentication/cognitoCustomMessage.handler
+    events:
+      - cognitoUserPool:
+          pool: TimerLolUserPool
+          trigger: CustomMessage
+          existing: true
+          forceDeploy: true
+  hello:
+    handler: src/functions/hello.handler
+    events:
+      - httpApi:
+          path: "/hello"
+          method: "GET"
+
+resources:
+  Resources:
+    TimerLolUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        # DeletionProtection: ACTIVE | INACTIVE
+        UserPoolName: TimerLolUserPool
+        MfaConfiguration: OFF
+        AutoVerifiedAttributes:
+          - email
+        AdminCreateUserConfig:
+          AllowAdminCreateUserOnly: false
+        UsernameAttributes:
+          - email
+        AccountRecoverySetting:
+          RecoveryMechanisms:
+            - Name: verified_email
+              Priority: 1
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: false
+            RequireNumbers: false
+            RequireSymbols: false
+            RequireUppercase: false
+            TemporaryPasswordValidityDays: 12
+        Schema:
+          - Name: name
+            Mutable: true
+            Required: true
+            AttributeDataType: String
+    TimerLolUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: TimerLolUserPoolClient
+        UserPoolId: !Ref TimerLolUserPool
+        ExplicitAuthFlows:
+          - ALLOW_USER_PASSWORD_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        TokenValidityUnits:
+          AccessToken: hours
+          RefreshToken: days
+        AccessTokenValidity: 3
+        RefreshTokenValidity: 31 # 1 month
+
