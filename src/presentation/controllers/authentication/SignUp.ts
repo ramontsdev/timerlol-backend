@@ -1,8 +1,6 @@
 import { SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
-import { IEncrypter } from "../../../domain/use-cases/cryptography/encrypter";
 import { ICreateUser } from "../../../domain/use-cases/user/create-user";
 import { IFindUserByEmail } from "../../../domain/use-cases/user/find-user-by-email";
-import { JwtAdapter } from "../../../infra/cryptography/jwt-adapter";
 import { DbCreateUser } from "../../../infra/database/repositories/user/db-create-user";
 import { DbFindUserByEmail } from "../../../infra/database/repositories/user/db-find-user-by-email";
 import { cognitoClient } from "../../../infra/libs/cognitoClient";
@@ -17,7 +15,6 @@ class SignUpController implements IController {
     private readonly emailValidador: IEmailValidator,
     private readonly findUserByEmail: IFindUserByEmail,
     private readonly createUser: ICreateUser,
-    private readonly encrypter: IEncrypter,
   ) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -36,7 +33,7 @@ class SignUpController implements IController {
       const user = await this.findUserByEmail.findByEmail(email);
       if (user) return conflict({ error: 'E-mail already exists' });
 
-      const newUser = await this.createUser.create({ name, email });
+      await this.createUser.create({ name, email });
 
       const signUpCommand = new SignUpCommand({
         ClientId: process.env.COGNITO_CLIENT_ID,
@@ -63,6 +60,5 @@ class SignUpController implements IController {
 const emailValidator = new EmailValidatorAdapter();
 const dbFindUserByEmail = new DbFindUserByEmail();
 const dbCreateUser = new DbCreateUser();
-const jwtAdapter = new JwtAdapter();
 
-export const signUpController = new SignUpController(emailValidator, dbFindUserByEmail, dbCreateUser, jwtAdapter);
+export const signUpController = new SignUpController(emailValidator, dbFindUserByEmail, dbCreateUser);
