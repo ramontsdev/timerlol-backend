@@ -1,59 +1,60 @@
-import { SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { CodeMismatchException, ConfirmSignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { IEncrypter } from "../../../domain/use-cases/cryptography/encrypter";
-import { ICreateUser } from "../../../domain/use-cases/user/create-user";
 import { IFindUserByEmail } from "../../../domain/use-cases/user/find-user-by-email";
 import { JwtAdapter } from "../../../infra/cryptography/jwt-adapter";
-import { DbCreateUser } from "../../../infra/database/repositories/user/db-create-user";
 import { DbFindUserByEmail } from "../../../infra/database/repositories/user/db-find-user-by-email";
 import { cognitoClient } from "../../../infra/libs/cognitoClient";
 import { EmailValidatorAdapter } from "../../../main/adapters/email-validator-adapter";
-import { badRequest, conflict, created, serverError } from "../../helpers/http-helpers";
+import { badRequest, notFound, ok, serverError } from "../../helpers/http-helpers";
 import { IController } from "../../protocols/controller";
 import { IEmailValidator } from "../../protocols/email-validator";
 import { HttpRequest, HttpResponse } from "../../protocols/http";
 
-class SignUpController implements IController {
+class ConfirmAccountEmailController implements IController {
   constructor(
     private readonly emailValidador: IEmailValidator,
     private readonly findUserByEmail: IFindUserByEmail,
-    private readonly createUser: ICreateUser,
     private readonly encrypter: IEncrypter,
   ) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const requiredFields = ['name', 'email', 'password', 'confirmPassword'];
+      const requiredFields = ['email', 'code'];
       for await (const field of requiredFields)
         if (!httpRequest.body[field]) return badRequest({ error: `${field} is required.` });
 
-      const { name, email, password, confirmPassword } = httpRequest.body;
+      const { email, code } = httpRequest.body;
 
-      const isValidEmail = this.emailValidador.isValid(email);
+      const isValidEmail = this.emailValidador.isValid(email)
       if (!isValidEmail) return badRequest({ error: 'Invalid e-mail.' });
 
-      if (password !== confirmPassword) return badRequest({ error: 'Passwords do not match' });
-
       const user = await this.findUserByEmail.findByEmail(email);
-      if (user) return conflict({ error: 'E-mail already exists' });
+      if (!user) return notFound({ error: 'user not found.' })
 
-      const newUser = await this.createUser.create({ name, email });
-
-      const signUpCommand = new SignUpCommand({
+      const command = new ConfirmSignUpCommand({
         ClientId: process.env.COGNITO_CLIENT_ID,
         Username: email,
-        Password: password,
-        UserAttributes: [{ Name: 'name', Value: name }],
+        ConfirmationCode: code,
       });
 
-      const { UserSub, UserConfirmed } = await cognitoClient.send(signUpCommand);
+      const { $metadata } = await cognitoClient.send(command);
+      const accessToken = this.encrypter.encrypt(user.id);
 
-      return created({ userConfirmed: UserConfirmed, awsUserSub: UserSub });
+      return ok({
+        accessToken,
+        userConfirmed: true,
+        $metadata,
+      });
     } catch (err) {
       const error = err as Error;
       console.log({
         errorName: error.name,
         message: error.message,
       });
+
+      if (error instanceof CodeMismatchException) {
+        return badRequest({ error: 'Invalid code.' });
+      }
 
       return serverError();
     }
@@ -62,7 +63,6 @@ class SignUpController implements IController {
 
 const emailValidator = new EmailValidatorAdapter();
 const dbFindUserByEmail = new DbFindUserByEmail();
-const dbCreateUser = new DbCreateUser();
 const jwtAdapter = new JwtAdapter();
 
-export const signUpController = new SignUpController(emailValidator, dbFindUserByEmail, dbCreateUser, jwtAdapter);
+export const confirmAccountEmailController = new ConfirmAccountEmailController(emailValidator, dbFindUserByEmail, jwtAdapter);
