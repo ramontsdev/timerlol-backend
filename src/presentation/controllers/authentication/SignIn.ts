@@ -11,7 +11,7 @@ import { JwtAdapter } from '../../../infra/cryptography/jwt-adapter';
 import { DbFindUserByEmail } from '../../../infra/database/repositories/user/db-find-user-by-email';
 import { cognitoClient } from '../../../infra/libs/cognitoClient';
 import { EmailValidatorAdapter } from '../../../main/adapters/email-validator-adapter';
-import { badRequest, notFound, ok, serverError, unauthorized } from '../../helpers/http-helpers';
+import { badRequest, forbidden, notFound, ok, serverError, unauthorized } from '../../helpers/http-helpers';
 import { IController } from '../../protocols/controller';
 import { IEmailValidator } from '../../protocols/email-validator';
 import { HttpRequest, HttpResponse } from '../../protocols/http';
@@ -37,13 +37,14 @@ class SignInController implements IController {
       const user = await this.findUserByEmail.findByEmail(email);
       if (!user) return notFound({ error: 'E-mail not found.' });
 
-      const { accessToken } = await this.awsSignIn(user, password);
+      const { accessToken, userConfirmed } = await this.awsSignIn(user, password);
+      if (!userConfirmed) {
+        return forbidden({ error: 'Confirmation e-mail is required' })
+      }
 
       return ok({
         accessToken,
-        userConfirmed: true,
-        // awsAccessToken: AuthenticationResult?.AccessToken,
-        // awsRefreshToken: AuthenticationResult?.RefreshToken,
+        userConfirmed,
       });
     } catch (err) {
       const error = err as Error;

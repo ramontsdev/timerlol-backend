@@ -7,9 +7,23 @@ export function serverError(data?: any): HttpResponse {
   };
 }
 
-export function badRequest(data?: any): HttpResponse {
+export function conflict(data?: any): HttpResponse {
   return {
-    statusCode: 400,
+    statusCode: 409,
+    body: data,
+  };
+}
+
+export function notFound(data?: any): HttpResponse {
+  return {
+    statusCode: 404,
+    body: data,
+  };
+}
+
+export function forbidden(data?: any) {
+  return {
+    statusCode: 403,
     body: data,
   };
 }
@@ -21,16 +35,9 @@ export function unauthorized(data?: any): HttpResponse {
   };
 }
 
-export function conflict(data?: any): HttpResponse {
+export function badRequest(data?: any): HttpResponse {
   return {
-    statusCode: 409,
-    body: data,
-  };
-}
-
-export function notFound(data?: any): HttpResponse {
-  return {
-    statusCode: 404,
+    statusCode: 400,
     body: data,
   };
 }
