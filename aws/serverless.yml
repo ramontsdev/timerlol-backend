@@ -58,9 +58,7 @@ functions:
   hello:
     handler: src/functions/hello.handler
     events:
-      - httpApi:
-          path: "/hello"
-          method: "GET"
+      - schedule: rate(14 minutes)
 
 resources:
   Resources:
