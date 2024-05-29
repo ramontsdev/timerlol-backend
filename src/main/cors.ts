@@ -2,10 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 
 export function cors(request: Request, response: Response, next: NextFunction) {
   // const allowedOrigins = [];
-  const allowedOrigins = process.env.ORIGIN_ALLOWED?.split('-') as string[];
+  // const allowedOrigins = process.env.ORIGIN_ALLOWED?.split('-') as string[];
 
-  const origin = request.header('origin');
-  const isAllowed = allowedOrigins.includes(origin!);
+  // const origin = request.header('origin');
+  // const isAllowed = allowedOrigins.includes(origin!);
 
   // if (isAllowed) {
   // response.setHeader('Access-Control-Allow-Origin', origin!);
