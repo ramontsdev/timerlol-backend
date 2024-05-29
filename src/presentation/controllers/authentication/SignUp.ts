@@ -19,7 +19,7 @@ class SignUpController implements IController {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const requiredFields = ['name', 'email', 'password', 'confirmPassword'];
+      const requiredFields = ['name', 'email', 'password', /* 'confirmPassword' */];
       for await (const field of requiredFields)
         if (!httpRequest.body[field]) return badRequest({ error: `${field} is required.` });
 
@@ -28,7 +28,7 @@ class SignUpController implements IController {
       const isValidEmail = this.emailValidador.isValid(email);
       if (!isValidEmail) return badRequest({ error: 'Invalid e-mail.' });
 
-      if (password !== confirmPassword) return badRequest({ error: 'Passwords do not match' });
+      // if (password !== confirmPassword) return badRequest({ error: 'Passwords do not match' });
 
       const user = await this.findUserByEmail.findByEmail(email);
       if (user) return conflict({ error: 'E-mail already exists' });

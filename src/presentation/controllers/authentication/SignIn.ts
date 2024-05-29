@@ -11,7 +11,7 @@ import { JwtAdapter } from '../../../infra/cryptography/JwtAdapter';
 import { DbFindUserByEmail } from '../../../infra/database/repositories/user/DbFindUserByEmail';
 import { cognitoClient } from '../../../infra/libs/cognitoClient';
 import { EmailValidatorAdapter } from '../../../main/adapters/EmailValidatorAdapter';
-import { badRequest, forbidden, notFound, ok, serverError, unauthorized } from '../../helpers/httpHelpers';
+import { badRequest, notFound, ok, serverError, unauthorized } from '../../helpers/httpHelpers';
 import { IController } from '../../protocols/controller';
 import { IEmailValidator } from '../../protocols/emailValidator';
 import { HttpRequest, HttpResponse } from '../../protocols/http';
@@ -38,9 +38,9 @@ class SignInController implements IController {
       if (!user) return notFound({ error: 'E-mail not found.' });
 
       const { accessToken, userConfirmed } = await this.awsSignIn(user, password);
-      if (!userConfirmed) {
-        return forbidden({ error: 'Confirmation e-mail is required' })
-      }
+      /*       if (!userConfirmed) {
+              return forbidden({ error: 'Confirmation e-mail is required' })
+            } */
 
       return ok({
         accessToken,
