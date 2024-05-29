@@ -5,6 +5,7 @@ export type HttpRequest = {
   query?: any;
   params?: any;
   files?: File[];
+  accountId?: string;
 };
 
 export type HttpResponse = {

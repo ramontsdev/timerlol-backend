@@ -33,7 +33,6 @@ class SignUpController implements IController {
       const user = await this.findUserByEmail.findByEmail(email);
       if (user) return conflict({ error: 'E-mail already exists' });
 
-      await this.createUser.create({ name, email });
 
       const signUpCommand = new SignUpCommand({
         ClientId: process.env.COGNITO_CLIENT_ID,
@@ -44,7 +43,9 @@ class SignUpController implements IController {
 
       const { UserSub, UserConfirmed } = await cognitoClient.send(signUpCommand);
 
-      return created({ userConfirmed: UserConfirmed, awsUserSub: UserSub });
+      await this.createUser.create({ name, email, id: UserSub });
+
+      return created({ userConfirmed: UserConfirmed, userSub: UserSub });
     } catch (err) {
       const error = err as Error;
       console.log({

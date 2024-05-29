@@ -8,7 +8,6 @@ export function cors(request: Request, response: Response, next: NextFunction) {
   const isAllowed = allowedOrigins.includes(origin!);
 
   if (isAllowed) {
-    console.log("Caiu aqui!")
     response.setHeader('Access-Control-Allow-Origin', origin!);
     response.setHeader('Access-Control-Allow-Methods', '*');
     response.setHeader('Access-Control-Allow-Headers', '*');
