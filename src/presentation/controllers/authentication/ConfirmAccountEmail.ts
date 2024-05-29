@@ -1,13 +1,13 @@
 import { CodeMismatchException, ConfirmSignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { IEncrypter } from "../../../domain/use-cases/cryptography/encrypter";
 import { IFindUserByEmail } from "../../../domain/use-cases/user/find-user-by-email";
-import { JwtAdapter } from "../../../infra/cryptography/jwt-adapter";
-import { DbFindUserByEmail } from "../../../infra/database/repositories/user/db-find-user-by-email";
+import { JwtAdapter } from "../../../infra/cryptography/JwtAdapter";
+import { DbFindUserByEmail } from "../../../infra/database/repositories/user/DbFindUserByEmail";
 import { cognitoClient } from "../../../infra/libs/cognitoClient";
-import { EmailValidatorAdapter } from "../../../main/adapters/email-validator-adapter";
-import { badRequest, notFound, ok, serverError } from "../../helpers/http-helpers";
+import { EmailValidatorAdapter } from "../../../main/adapters/EmailValidatorAdapter";
+import { badRequest, notFound, ok, serverError } from "../../helpers/httpHelpers";
 import { IController } from "../../protocols/controller";
-import { IEmailValidator } from "../../protocols/email-validator";
+import { IEmailValidator } from "../../protocols/emailValidator";
 import { HttpRequest, HttpResponse } from "../../protocols/http";
 
 class ConfirmAccountEmailController implements IController {

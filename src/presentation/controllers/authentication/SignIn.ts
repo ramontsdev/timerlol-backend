@@ -7,13 +7,13 @@ import {
 import { User } from '../../../domain/models/user';
 import { IEncrypter } from '../../../domain/use-cases/cryptography/encrypter';
 import { IFindUserByEmail } from '../../../domain/use-cases/user/find-user-by-email';
-import { JwtAdapter } from '../../../infra/cryptography/jwt-adapter';
-import { DbFindUserByEmail } from '../../../infra/database/repositories/user/db-find-user-by-email';
+import { JwtAdapter } from '../../../infra/cryptography/JwtAdapter';
+import { DbFindUserByEmail } from '../../../infra/database/repositories/user/DbFindUserByEmail';
 import { cognitoClient } from '../../../infra/libs/cognitoClient';
-import { EmailValidatorAdapter } from '../../../main/adapters/email-validator-adapter';
-import { badRequest, forbidden, notFound, ok, serverError, unauthorized } from '../../helpers/http-helpers';
+import { EmailValidatorAdapter } from '../../../main/adapters/EmailValidatorAdapter';
+import { badRequest, forbidden, notFound, ok, serverError, unauthorized } from '../../helpers/httpHelpers';
 import { IController } from '../../protocols/controller';
-import { IEmailValidator } from '../../protocols/email-validator';
+import { IEmailValidator } from '../../protocols/emailValidator';
 import { HttpRequest, HttpResponse } from '../../protocols/http';
 
 class SignInController implements IController {

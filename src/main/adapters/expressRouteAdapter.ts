@@ -9,7 +9,7 @@ export function adaptRoute(controller: IController) {
       headers: request.headers,
       params: request.params,
       query: request.query,
-      accountId: request.metadata.accountId
+      accountId: request.metadata?.accountId
     }
 
     const httpResponse = await controller.handle(httpRequest);

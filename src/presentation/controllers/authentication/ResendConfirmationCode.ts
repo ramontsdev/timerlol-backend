@@ -1,7 +1,7 @@
 import { ResendConfirmationCodeCommand } from '@aws-sdk/client-cognito-identity-provider';
 
 import { cognitoClient } from '../../../infra/libs/cognitoClient';
-import { badRequest, ok, serverError } from '../../helpers/http-helpers';
+import { badRequest, ok, serverError } from '../../helpers/httpHelpers';
 import { IController } from '../../protocols/controller';
 import { HttpRequest, HttpResponse } from '../../protocols/http';
 

@@ -1,6 +1,6 @@
 import { IFindUserById } from "../../../domain/use-cases/user/find-user-by-id";
-import { DbFindUserById } from "../../../infra/database/repositories/user/db-find-user-by-id";
-import { notFound, ok, serverError, unauthorized } from "../../helpers/http-helpers";
+import { DbFindUserById } from "../../../infra/database/repositories/user/DbFindUserById";
+import { notFound, ok, serverError, unauthorized } from "../../helpers/httpHelpers";
 import { IController } from "../../protocols/controller";
 import { HttpRequest, HttpResponse } from "../../protocols/http";
 

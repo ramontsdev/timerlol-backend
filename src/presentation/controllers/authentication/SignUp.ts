@@ -1,13 +1,13 @@
 import { SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { ICreateUser } from "../../../domain/use-cases/user/create-user";
 import { IFindUserByEmail } from "../../../domain/use-cases/user/find-user-by-email";
-import { DbCreateUser } from "../../../infra/database/repositories/user/db-create-user";
-import { DbFindUserByEmail } from "../../../infra/database/repositories/user/db-find-user-by-email";
+import { DbCreateUser } from "../../../infra/database/repositories/user/DbCreateUser";
+import { DbFindUserByEmail } from "../../../infra/database/repositories/user/DbFindUserByEmail";
 import { cognitoClient } from "../../../infra/libs/cognitoClient";
-import { EmailValidatorAdapter } from "../../../main/adapters/email-validator-adapter";
-import { badRequest, conflict, created, serverError } from "../../helpers/http-helpers";
+import { EmailValidatorAdapter } from "../../../main/adapters/EmailValidatorAdapter";
+import { badRequest, conflict, created, serverError } from "../../helpers/httpHelpers";
 import { IController } from "../../protocols/controller";
-import { IEmailValidator } from "../../protocols/email-validator";
+import { IEmailValidator } from "../../protocols/emailValidator";
 import { HttpRequest, HttpResponse } from "../../protocols/http";
 
 class SignUpController implements IController {

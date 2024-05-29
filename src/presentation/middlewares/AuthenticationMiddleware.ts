@@ -1,6 +1,6 @@
 import { IDecrypter } from "../../domain/use-cases/cryptography/decrypter";
-import { JwtAdapter } from "../../infra/cryptography/jwt-adapter";
-import { ok, serverError, unauthorized } from "../helpers/http-helpers";
+import { JwtAdapter } from "../../infra/cryptography/JwtAdapter";
+import { ok, serverError, unauthorized } from "../helpers/httpHelpers";
 import { HttpRequest, HttpResponse } from "../protocols/http";
 import { IMiddleware } from "../protocols/middleware";
 
