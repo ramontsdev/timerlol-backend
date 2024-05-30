@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,5 +12,42 @@ model User {
   name  String
   email String @unique
 
+  settings   Settings @relation(fields: [settingsId], references: [id])
+  plan       Plan?    @relation(fields: [planId], references: [id])
+  settingsId String   @map("settings_id") @db.Uuid
+  planId     String?  @map("plan_id") @db.Uuid
+
   @@map("users")
+}
+
+model Plan {
+  id               String @id @default(uuid()) @db.Uuid
+  name             String
+  price            Int
+  billingFrequency String @map("billing_frequency")
+  users            User[]
+
+  @@map("plans")
+}
+
+enum Language {
+  ptBR @map("pt_br")
+  en
+}
+
+model Settings {
+  id                    String   @id @default(uuid()) @db.Uuid
+  enableDateHours       Boolean  @map("enble_date_hours")
+  enableSoundAlert      Boolean  @map("enble_sound_alert")
+  enableVibration       Boolean  @map("enable_vibration")
+  enablePreparationTime Boolean  @map("enable_preparation_time")
+  numberRounds          Int      @default(3) @map("number_rounds")
+  restTime              Int      @default(60) @map("rest_time")
+  roundTime             Int      @default(180) @map("round_time")
+  endRoundWarningTime   Int      @default(10) @map("end_round_warning_time")
+  language              Language
+
+  user User[]
+
+  @@map("settings")
 }

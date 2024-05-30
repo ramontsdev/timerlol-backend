@@ -8,6 +8,15 @@ export class DbCreateUser implements ICreateUser {
     return prismaClient.user.create({
       data: {
         ...userDTO,
+        settings: {
+          create: {
+            enableDateHours: true,
+            enablePreparationTime: false,
+            enableSoundAlert: true,
+            enableVibration: true,
+            language: 'en',
+          }
+        }
       },
     });
   }

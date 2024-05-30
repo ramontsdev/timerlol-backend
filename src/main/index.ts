@@ -3,6 +3,7 @@ import 'dotenv/config';
 import express from "express";
 import { cors } from "./cors";
 import { authenticationRoutes } from './routes/authentication';
+import { settingsRoutes } from './routes/settings';
 import { usersRoutes } from './routes/users';
 
 const server = express();
@@ -12,7 +13,8 @@ server.use(express.json());
 
 server.use([
   authenticationRoutes,
-  usersRoutes
+  usersRoutes,
+  settingsRoutes
 ])
 
 server.get('/hello', (request, response) => {
