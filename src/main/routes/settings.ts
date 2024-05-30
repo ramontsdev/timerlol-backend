@@ -7,7 +7,7 @@ import { middlewareAdapter } from "../adapters/middlewareAdpter";
 
 export const settingsRoutes = Router();
 
-settingsRoutes.get('/settings',
+settingsRoutes.get('/settings/:settingsId',
   middlewareAdapter(authenticationMiddleware),
   adaptRoute(getSettingsController)
 )

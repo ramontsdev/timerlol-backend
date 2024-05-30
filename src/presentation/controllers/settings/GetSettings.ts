@@ -7,8 +7,9 @@ import { HttpRequest, HttpResponse } from "../../protocols/http";
 class GetSettingsController implements IController {
   constructor(private readonly findSettingsByUserId: IFindSettingsById) {}
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
+
     try {
-      const settings = await this.findSettingsByUserId.findById(httpRequest.body.settingsId)
+      const settings = await this.findSettingsByUserId.findById(httpRequest.params.settingsId)
 
       return ok(settings);
     } catch (error) {
