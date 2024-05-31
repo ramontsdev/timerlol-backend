@@ -57,7 +57,7 @@ class UpdateSettingsController implements IController {
       const error = err as Error;
       console.log(error.message)
 
-      return serverError();
+      return serverError({ error: error.message });
     };
   }
 }

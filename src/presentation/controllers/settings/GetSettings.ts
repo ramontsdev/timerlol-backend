@@ -15,7 +15,7 @@ class GetSettingsController implements IController {
     } catch (error) {
       const err = error as Error;
       console.log(err.message)
-      return serverError();
+      return serverError({ error: err.message });
     }
   }
 }
