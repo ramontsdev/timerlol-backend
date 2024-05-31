@@ -20,8 +20,12 @@ class UpdateSettingsController implements IController {
         'endRoundWarningTime',
         'language'
       ];
-      for await (const field of requiredFields)
-        if (!httpRequest.body[field]) return badRequest({ error: `${field} is required.` });
+      console.log(httpRequest.body)
+      for (const field of requiredFields) {
+        if (!(field in httpRequest.body)) {
+          return badRequest({ error: `${field} is required.` });
+        }
+      }
 
       const { settingsId } = httpRequest.params;
       const {
