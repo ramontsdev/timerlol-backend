@@ -20,12 +20,13 @@ model User {
 }
 
 model Subscription {
-  id     String        @id @default(uuid()) @db.Uuid
-  userId String        @map("user_id") @db.Uuid
-  planId String        @map("plan_id") @db.Uuid
-  status BillingStatus
-  user   User          @relation(fields: [userId], references: [id])
-  plan   Plan          @relation(fields: [planId], references: [id])
+  id                     String        @id @default(uuid()) @db.Uuid
+  userId                 String        @map("user_id") @db.Uuid
+  planId                 String        @map("plan_id") @db.Uuid
+  status                 BillingStatus
+  user                   User          @relation(fields: [userId], references: [id])
+  plan                   Plan          @relation(fields: [planId], references: [id])
+  subscriptionExternalId String        @map("subscription_external_id")
 
   @@map("subscriptions")
 }
@@ -37,6 +38,7 @@ model Plan {
   billingFrequency String         @map("billing_frequency")
   active           Boolean
   subscription     Subscription[]
+  planExternalId   String         @map("plan_external_id")
 
   @@map("plans")
 }
