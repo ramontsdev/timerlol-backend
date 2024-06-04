@@ -6,6 +6,7 @@ export class DbFindUserById implements IFindUserById {
   findById(id: string): Promise<User | null> {
     return prismaClient.user.findUnique({
       where: { id },
+      include: { subscription: true },
     });
   }
 }

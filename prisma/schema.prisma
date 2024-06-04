@@ -12,16 +12,16 @@ model User {
   name  String
   email String @unique
 
-  settings     Settings       @relation(fields: [settingsId], references: [id])
-  settingsId   String         @map("settings_id") @db.Uuid
-  subscription Subscription[]
+  settings     Settings      @relation(fields: [settingsId], references: [id])
+  settingsId   String        @map("settings_id") @db.Uuid
+  subscription Subscription?
 
   @@map("users")
 }
 
 model Subscription {
   id                     String        @id @default(uuid()) @db.Uuid
-  userId                 String        @map("user_id") @db.Uuid
+  userId                 String        @unique @map("user_id") @db.Uuid
   planId                 String        @map("plan_id") @db.Uuid
   status                 BillingStatus
   user                   User          @relation(fields: [userId], references: [id])
