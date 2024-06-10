@@ -12,11 +12,6 @@ const stripe = new Stripe(
   "sk_test_51Of0ZJHg2ozKWVx1YQB8yiFrSg1SIYucoRsARceK0TErQAeiozGxnB3oAPg0PgEdlmjz5MiGZT9zeYiiKci3NdiL00wOitByw2"
 );
 
-paymentsRouter.get("/plans", async (request, response) => {
-  const { data } = await stripe.plans.list();
-
-  return response.status(200).json(data);
-});
 paymentsRouter.post(
   "/plans/payment-intent/:planId",
   middlewareAdapter(authenticationMiddleware),
