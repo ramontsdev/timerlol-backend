@@ -24,7 +24,7 @@ model Subscription {
   userId                 String        @unique @map("user_id") @db.Uuid
   planId                 String        @map("plan_id") @db.Uuid
   status                 BillingStatus
-  user                   User          @relation(fields: [userId], references: [id])
+  user                   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan                   Plan          @relation(fields: [planId], references: [id])
   subscriptionExternalId String        @map("subscription_external_id")
 
