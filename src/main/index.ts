@@ -6,6 +6,7 @@ import { authenticationRoutes } from './routes/authentication';
 import { paymentsRouter } from './routes/payments';
 import { plansRoutes } from './routes/plans';
 import { settingsRoutes } from './routes/settings';
+import { uploadsRoutes } from './routes/uploads';
 import { usersRoutes } from './routes/users';
 
 const server = express();
@@ -18,7 +19,8 @@ server.use([
   usersRoutes,
   settingsRoutes,
   paymentsRouter,
-  plansRoutes
+  plansRoutes,
+  uploadsRoutes
 ])
 
 server.get('/hello', (request, response) => {

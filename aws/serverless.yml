@@ -62,6 +62,21 @@ functions:
 
 resources:
   Resources:
+    TimerLolS3:
+      Type: "AWS::S3::Bucket"
+      Properties:
+        BucketName: timer-lol-bucket-12345
+        PublicAccessBlockConfiguration:
+          BlockPublicPolicy: false
+          RestrictPublicBuckets: false
+          BlockPublicAcls: false
+          IgnorePublicAcls: false
+        # Object Ownership
+        OwnershipControls:
+          Rules:
+          #Object writer
+            - ObjectOwnership: "BucketOwnerPreferred"
+
     TimerLolUserPool:
       Type: AWS::Cognito::UserPool
       Properties:

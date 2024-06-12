@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IController } from "../../presentation/protocols/controller";
-import { HttpRequest } from "../../presentation/protocols/http";
+import { File, HttpRequest } from "../../presentation/protocols/http";
 
 export function adaptRoute(controller: IController) {
   return async (request: Request, response: Response) => {
@@ -9,7 +9,9 @@ export function adaptRoute(controller: IController) {
       headers: request.headers,
       params: request.params,
       query: request.query,
-      accountId: request.metadata?.accountId
+      accountId: request.metadata?.accountId,
+      files: request.files as File[],
+      file: request.file,
     }
 
     const httpResponse = await controller.handle(httpRequest);

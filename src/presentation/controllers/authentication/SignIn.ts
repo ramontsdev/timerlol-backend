@@ -4,7 +4,7 @@ import {
   UserNotConfirmedException
 } from '@aws-sdk/client-cognito-identity-provider';
 
-import { User } from '../../../domain/models/user';
+import { UserModel } from '../../../domain/models/user';
 import { IEncrypter } from '../../../domain/use-cases/cryptography/encrypter';
 import { IFindUserByEmail } from '../../../domain/use-cases/user/find-user-by-email';
 import { JwtAdapter } from '../../../infra/cryptography/JwtAdapter';
@@ -61,7 +61,7 @@ class SignInController implements IController {
     }
   }
 
-  private async awsSignIn(user: User, password: string) {
+  private async awsSignIn(user: UserModel, password: string) {
     try {
       const command = new InitiateAuthCommand({
         ClientId: process.env.COGNITO_CLIENT_ID,
