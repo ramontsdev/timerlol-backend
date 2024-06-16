@@ -51,7 +51,7 @@ model Logo {
   userId   String @unique @map("user_id") @db.Uuid
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("logo")
+  @@map("logos")
 }
 
 enum BillingStatus {
