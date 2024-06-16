@@ -1,6 +1,6 @@
 import { Plan } from "@prisma/client";
 import Stripe from "stripe";
-import { User } from "../../../domain/models/user";
+import { UserModel } from "../../../domain/models/user";
 import { IFindUserById } from "../../../domain/use-cases/user/find-user-by-id";
 import { prismaClient } from "../../../infra/database/postgresDb";
 import { DbFindUserById } from "../../../infra/database/repositories/user/DbFindUserById";
@@ -58,7 +58,7 @@ class PaymentPlanController implements IController {
     })
   }
 
-  private async handleNewCustomer(user: User, plan: Plan) {
+  private async handleNewCustomer(user: UserModel, plan: Plan) {
     const newCustomer = await stripe.customers.create({
       name: user.name,
       email: user.email,
@@ -70,7 +70,7 @@ class PaymentPlanController implements IController {
     return await this.handleNewSubscription(user, newCustomer, plan);
   }
 
-  private async handleNewSubscription(user: User, customer: Stripe.Customer, plan: Plan) {
+  private async handleNewSubscription(user: UserModel, customer: Stripe.Customer, plan: Plan) {
     const newSubscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{

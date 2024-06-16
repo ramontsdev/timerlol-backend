@@ -1,4 +1,4 @@
-import { User } from '../../models/user';
+import { UserModel } from '../../models/user';
 
 export type UserDTO = {
   id?: string;
@@ -7,5 +7,5 @@ export type UserDTO = {
 };
 
 export interface ICreateUser {
-  create(createUserDTO: UserDTO): Promise<User>;
+  create(createUserDTO: UserDTO): Promise<UserModel>;
 }

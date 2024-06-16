@@ -1,5 +1,5 @@
-import { User } from '../../models/user';
+import { UserModel } from '../../models/user';
 
 export interface IFindUserByCPF {
-  findByCPF(cpf: string): Promise<User | null>;
+  findByCPF(cpf: string): Promise<UserModel | null>;
 }
