@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { IFindUserById } from "../../../domain/use-cases/user/find-user-by-id";
 import { prismaClient } from '../../../infra/database/postgresDb';
 import { DbFindUserById } from "../../../infra/database/repositories/user/DbFindUserById";
@@ -34,10 +34,30 @@ class UploadLogo implements IController {
         return badRequest({ error: 'Image is required' });
       }
 
+      const _logo = await prismaClient.logo.findUnique({
+        where: { userId: user.id }
+      })
+
+      if (_logo) {
+        await DeleteFile.execute(_logo.filename);
+        const logo = await prismaClient.logo.update({
+          where: { id: _logo.id },
+          data: {
+            filename: httpRequest.file.filename
+          }
+        });
+        await UploadFileService.execute(httpRequest.file.filename);
+
+        return ok({
+          ...logo,
+          url: `${process.env.AWS_BUCKET_URL}/${logo.filename}`
+        });
+      }
+
       const logo = await prismaClient.logo.create({
         data: {
           filename: httpRequest.file.filename,
-          userId: user.id
+          userId: user.id,
         }
       });
       await UploadFileService.execute(httpRequest.file.filename);
@@ -49,6 +69,7 @@ class UploadLogo implements IController {
     } catch (err) {
       const error = err as Error;
 
+      console.log({ error: error.message })
       return serverError(error.message);
     };
   }
@@ -83,6 +104,29 @@ export class UploadFileService {
       const error = err as Error;
 
       await fs.promises.unlink(tmpPath);
+
+      throw error;
+    };
+  }
+}
+
+class DeleteFile {
+  static async execute(filename: string) {
+    try {
+      const s3Client = new S3Client({
+        region: process.env.AWS_REGION,
+      });
+
+      const deleteObjectCommand = new DeleteObjectCommand({
+        Bucket: 'timer-lol-bucket-12345',
+        Key: filename
+      });
+
+      const response = await s3Client.send(deleteObjectCommand);
+
+      return response;
+    } catch (err) {
+      const error = err as Error;
 
       throw error;
     };
