@@ -34,14 +34,14 @@ class UploadLogo implements IController {
         return badRequest({ error: 'Image is required' });
       }
 
-      const _logo = await prismaClient.logo.findUnique({
-        where: { userId: user.id }
+      const logoAlreadyExists = await prismaClient.logo.findFirst({
+        where: { userId: user.id, }
       })
 
-      if (_logo) {
-        await DeleteFile.execute(_logo.filename);
+      if (logoAlreadyExists) {
+        await DeleteFile.execute(logoAlreadyExists.filename);
         const logo = await prismaClient.logo.update({
-          where: { id: _logo.id },
+          where: { id: logoAlreadyExists.id },
           data: {
             filename: httpRequest.file.filename
           }
